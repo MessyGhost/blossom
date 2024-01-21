@@ -1,0 +1,22 @@
+{
+  "name": "blossom",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsx build/build.ts"
+  },
+  "keywords": [],
+  "author": "Messy_Ghost",
+  "devDependencies": {
+    "@types/archiver": "^6.0.2",
+    "archiver": "^6.0.1",
+    "esbuild": "^0.19.11",
+    "tsx": "^4.7.0",
+    "yggdrasil": "link:yggdrasil"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "sharp": "^0.33.2",
+    "sqlite3": "^5.1.7"
+  }
+}

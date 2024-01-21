@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/yggdrasil/src/main.ts",
+            "args": [
+                "-c",
+                "config.json"
+            ],
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/tsx",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        }
+    ]
+}

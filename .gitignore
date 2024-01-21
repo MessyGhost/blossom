@@ -1,0 +1,5 @@
+build/
+build.tar.gz
+private.pem
+config.json
+*node_modules/

@@ -34,7 +34,7 @@ class MyDatabase extends AbstractDatabase {
         const _this = this;
         return new Promise((resolve, reject) => {
             _this.db.exec(sql, function (err) {
-                if(err) {
+                if (err) {
                     reject(err);
                 }
                 else {
@@ -47,8 +47,8 @@ class MyDatabase extends AbstractDatabase {
     async run(sql: string, params?: any): Promise<any> {
         const _this = this;
         return new Promise(function (resolve, reject) {
-            _this.db.run(sql, params, function(err) {
-                if(err) {
+            _this.db.run(sql, params, function (err) {
+                if (err) {
                     reject(err);
                 }
                 else {
@@ -61,7 +61,7 @@ class MyDatabase extends AbstractDatabase {
     async get(sql: string, params: any): Promise<any> {
         return new Promise((resolve, reject) => {
             this.db.get(sql, params, (err, row) => {
-                if(err) {
+                if (err) {
                     reject(err);
                 }
                 else {
@@ -74,7 +74,7 @@ class MyDatabase extends AbstractDatabase {
     async all(sql: string, params: any): Promise<any[]> {
         return new Promise((resolve, reject) => {
             this.db.all(sql, params, (err, rows) => {
-                if(err) {
+                if (err) {
                     reject(err);
                 }
                 else {
@@ -92,7 +92,7 @@ export default function yggdrasil(options: YggdrasilOptions): YggdrasilCore {
     return {
         profileManager: new ProfileManager(db),
         userManager: new UserManager(db),
-        sessionManager: new SessionManager(db, {sessionExpiration: options.sessionExpiration?? 15 * 24 * 60 * 60 * 1000}),
+        sessionManager: new SessionManager(db, { sessionExpiration: options.sessionExpiration ?? 15 * 24 * 60 * 60 * 1000 }),
         textureManager: new TextureManager(db)
     };
 }

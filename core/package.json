@@ -14,6 +14,7 @@
     "bcrypt": "^5.1.1",
     "json-schema": "^0.4.0",
     "sqlite3": "^5.1.7",
+    "uid-safe": "^2.1.5",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

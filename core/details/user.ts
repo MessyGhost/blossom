@@ -45,6 +45,11 @@ class UserDao {
                 'VALUES (?,?,?,?)', [user.id, user.email, user.passwordHash, user.preferredLanguage])).changes !== 0;
     }
 
+    async changePassword(user: string, passwordHash: string): Promise<boolean> {
+        return (await this.db
+            .run('UPDATE users SET passwordHash = ? WHERE id = ?', [passwordHash, user])).changes !== 0;
+    }
+
     async deleteUser(id: string): Promise<boolean> {
         return (await this.db
             .run('DELETE FROM users WHERE id = ? ', [id])).changes !== 0;
@@ -77,6 +82,10 @@ export class UserManager {
             return user;
         }
         return null;
+    }
+
+    async changePassword(user: string, password: string): Promise<boolean> {
+        return await this.dao.changePassword(user, await passwordHash(password));
     }
 
     async findUserById(id: string): Promise<YggdrasilUser | null> {

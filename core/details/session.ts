@@ -1,6 +1,6 @@
 import { Database } from "./db";
-import crypto from 'node:crypto';
 import * as uuid from 'uuid';
+import uid from 'uid-safe';
 
 enum SessionStatus {
     VALID,
@@ -90,7 +90,7 @@ export class SessionManager {
     }
 
     async newSession(user: string, clientToken?: string): Promise<SessionInfo> {
-        const accessToken = crypto.randomBytes(256).toString('hex');
+        const accessToken = await uid(256);
         const clientTok = clientToken ?? uuid.v4().replace(/-/g, '');
         await this.dao.saveSession({
             user: user,

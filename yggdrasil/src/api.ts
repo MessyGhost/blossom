@@ -51,13 +51,13 @@ export class ApiListener {
             secret: crypto.randomBytes(16).toString('utf-8'),
             store: new MyStore(),
             saveUninitialized: false,
-            resave: false
+            resave: false,
+            rolling: true
         }));
 
         this.api.use(express.json());
 
         // Register
-
         const regiserSchema: Schema = {
             type: 'object',
             properties: {
@@ -77,6 +77,7 @@ export class ApiListener {
             const user = await this.access.userManager.register(req.body.email, req.body.password, 'en_US');
             if (user) {
                 req.session.user = user;
+                res.status(204);
             }
             else {
                 res.status(403);
@@ -102,14 +103,57 @@ export class ApiListener {
             required: ['email', 'password']
         }
         this.api.post('/api/login', schemaCheck.body(loginSchema), async (req, res) => {
-
             const user = await this.access.userManager.login(req.body.email, req.body.password);
             if (!user) {
                 res.status(403).send();
                 return;
             }
             req.session.user = user.id;
-            res.send();
+            res.status(204).send();
+        });
+
+
+        // Change password
+        const cpasswordSchema: Schema = {
+            type: 'object',
+            properties: {
+                password: {
+                    type: 'string',
+                    minLength: 8,
+                    maxLength: 48
+                }
+            },
+            required: ['password']
+        };
+        this.api.post('/api/changepwd', this.sessionCheck, schemaCheck.body(cpasswordSchema),
+            async (req, res) => {
+                const result = await this.access.userManager.changePassword(req.session.user!!, req.body.password);
+                try {
+                    await this.access.sessionManager.invalidateAllSessions(req.session.user!!);
+                }
+                catch (err) {
+                    console.error(err);
+                }
+                if (result) {
+                    res.status(204);
+                }
+                else {
+                    res.status(500);
+                }
+                res.send();
+            }
+        );
+
+        // Whoami
+        this.api.get('/api/whoami', this.sessionCheck, async (req, res) => {
+            const user = await this.access.userManager.findUserById(req.session.user!!);
+            if (!user) {
+                delete req.session.user;
+                res.status(403).send();
+            }
+            else {
+                res.send({ id: user.id });
+            }
         });
 
 
@@ -120,14 +164,23 @@ export class ApiListener {
                 name: {
                     type: 'string',
                     pattern: '^[0-9a-zA-Z_]{1,32}$'
+                },
+                id: {
+                    type: 'string',
+                    pattern: '^[0-9a-fA-F]{32}$'
                 }
             },
             required: ['name']
         };
         this.api.post('/api/profile/create', this.sessionCheck,
             schemaCheck.body(cprofileSchema), async (req, res) => {
-                const id = await access.profileManager.createProfile(req.session.user!!, req.body.name);
-                res.send(id);
+                const id = await access.profileManager.createProfile(req.session.user!!, req.body.name, req.body.id);
+                if (id) {
+                    res.send({ id });
+                }
+                else {
+                    res.status(403).send();
+                }
             }
         );
 
@@ -157,7 +210,7 @@ export class ApiListener {
                     }
                 }
                 await access.sessionManager.temporarilyInvalidateSessions(req.body.profile);
-                res.send();
+                res.status(204).send();
             }
         );
 
@@ -174,7 +227,7 @@ export class ApiListener {
                     res.status(403).send();
                 }
                 else {
-                    res.send();
+                    res.status(204).send();
                 }
             }
             else {
@@ -255,7 +308,6 @@ export class ApiListener {
 
                 let success;
                 if (req.body.payload.type === 'skin') {
-                    // transaction?
                     success = await this.access.profileManager.updateSkin(
                         req.body.profile, hash,
                         req.body.payload.model === 'slim');

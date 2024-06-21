@@ -70,8 +70,8 @@ export class ProfileManager {
         this.dao = new ProfileDao(db);
     }
 
-    async createProfile(user: string, name: string): Promise<string | null> {
-        const id = uuid.v4().replace(/-/g, '');
+    async createProfile(user: string, name: string, id?: string): Promise<string | null> {
+        id = id ?? uuid.v4().replace(/-/g, '');
         const success = await this.dao.saveProfile({
             id,
             name: name,

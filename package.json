@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "tsx build/build.ts"
+    "build": "tsx build/build.ts",
+    "test": "pnpm run --prefix=yggdrasil test"
   },
   "keywords": [],
   "author": "Messy_Ghost",
